@@ -1,14 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Teachable Machine Debug</title>
-    <!-- Librerías necesarias -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tpt src="https://cdn.jsdelivr.net/npmchine/image>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        input[type="file"] { margin: 20px; }
-        #result, #debug { margin-top: 20px; font-size: 1em; }
-        #uploadedImage { margin-top: 20px; }
+    <!-- Librería de Teachable Machine para imágenes -->
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.4/dist/teachablemachine-image.min.js        
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f9f9f9;
+        }
+        input[type="file"] {
+            margin: 20px;
+        }
+        #result, #debug {
+            margin-top: 20px;
+            font-size: 1em;
+        }
+        #uploadedImage {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            background-color: white;
+        }
     </style>
 </head>
 <body>
