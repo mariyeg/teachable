@@ -1,49 +1,72 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <title>Teachable Machine Model</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        input[type="file"] { margin: 20px; }
-        #result { margin-top: 20px; font-size: 1.2em; }
-    </style>
-</head>
-<body>
-    <h1>Modelo de Teachable Machine</h1>
-    <p>Carga una imagen para hacer una predicción</p>
-    <input type="file" accept="image/*" onchange="handleImageUpload(event)">
-    <br>
-    <img id="uploadedImage" width="300" style="display:none;" />
-    <div id="result"></div>
+	<head>
+		<title>Teachable Machine Image Model with upload</title>
+	</head>
+	<body>
+		<img id="imagePreview" style="height: 300px;" />
+		<input id="imageUpload" type="file" />
 
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image"></script>
-    <script type="text/javascript">
-        const URL = "https://teachablemachine.withgoogle.com/models/Vork4AlMC/"; // Reemplaza con tu URL
-        let model, maxPredictions;
+		<div>Teachable Machine Image Model with upload</div>
+		<div id="label-container"></div>
+		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+		<script type="text/javascript">
+			// More API functions here:
+			// https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
-        async function initModel() {
-            const modelURL = URL + "model.json";
-            const metadataURL = URL + "metadata.json";
-            model = await tmImage.load(modelURL, metadataURL);
-            maxPredictions = model.getTotalClasses();
-        }
+			// the link to your model provided by Teachable Machine export panel
+			const URL = "https://teachablemachine.withgoogle.com/models/Vork4AlMC/";
 
-        async function handleImageUpload(event) {
-            const image = document.getElementById("uploadedImage");
-            image.src = URL.createObjectURL(event.target.files[0]);
-            image.onload = async () => {
-                image.style.display = "block";
-                const prediction = await model.predict(image);
-                let resultText = "";
-                prediction.forEach(p => {
-                    resultText += `${p.className}: ${(p.probability * 100).toFixed(2)}%<br>`;
-                });
-                document.getElementById("result").innerHTML = resultText;
-            };
-        }
+			let model, labelContainer, maxPredictions;
 
-        window.onload = initModel;
-    </script>
-</body>
+			// Load the image model 
+			async function init() {
+				const modelURL = URL + 'model.json';
+				const metadataURL = URL + 'metadata.json';
+
+				// load the model and metadata
+				model = await tmImage.load(modelURL, metadataURL);
+				maxPredictions = model.getTotalClasses();
+
+				labelContainer = document.getElementById('label-container');
+				for (let i = 0; i < maxPredictions; i++) {
+					// and class labels
+					labelContainer.appendChild(document.createElement('div'));
+				}
+			}
+
+			async function predict() {
+				// predict can take in an image, video or canvas html element
+				var image = document.getElementById('imagePreview');
+				const prediction = await model.predict(image, false);
+				for (let i = 0; i < maxPredictions; i++) {
+					const classPrediction =
+						prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+					labelContainer.childNodes[i].innerHTML = classPrediction;
+				}
+			}
+		</script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			function readURL(input) {
+				if (input.files && input.files[0]) {
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						$('#imagePreview').attr('src', e.target.result);
+						// $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
+						$('#imagePreview').hide();
+						$('#imagePreview').fadeIn(650);
+					};
+					reader.readAsDataURL(input.files[0]);
+					init().then(() => {
+						predict();
+					});
+				}
+			}
+			$('#imageUpload').change(function () {
+				readURL(this);
+			});
+		</script>
+	</body>
 </html>
