@@ -2,8 +2,6 @@
 <html>
 <head>
     <title>Teachable Machine Model</title>
-    https://cdn.jsdelivr.net/npm/@tensorflow/tfjs
-    https://cdn.jsdelivr.net/npm/@teachablemachine/image
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
         input[type="file"] { margin: 20px; }
@@ -18,6 +16,8 @@
     <img id="uploadedImage" width="300" style="display:none;" />
     <div id="result"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image"></script>
     <script type="text/javascript">
         const URL = "https://teachablemachine.withgoogle.com/models/Vork4AlMC/"; // Reemplaza con tu URL
         let model, maxPredictions;
