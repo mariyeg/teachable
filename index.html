@@ -1,29 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Teachable Machine Debug</title>
-    <!-- Librería de Teachable Machine para imágenes -->
-    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.4/dist/teachablemachine-image.min.js        
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-            background-color: #f9f9f9;
-        }
-        input[type="file"] {
-            margin: 20px;
-        }
-        #result, #debug {
-            margin-top: 20px;
-            font-size: 1em;
-        }
-        #uploadedImage {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 5px;
-            background-color: white;
-        }
+    <title>Teachable Machine Model</title>
+    https://cdn.jsdelivr.net/npm/@tensorflow/tfjs
+    https://cdn.jsdelivr.net/npm/@teachablemachine/image
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        input[type="file"] { margin: 20px; }
+        #result { margin-top: 20px; font-size: 1.2em; }
     </style>
 </head>
 <body>
@@ -33,53 +17,29 @@
     <br>
     <img id="uploadedImage" width="300" style="display:none;" />
     <div id="result"></div>
-    <div id="debug" style="color: gray;"></div>
 
     <script type="text/javascript">
-        const URL = "https://teachablemachine.withgoogle.com/models/Vork4AlMC/";
+        const URL = "https://teachablemachine.withgoogle.com/models/Vork4AlMC/"; // Reemplaza con tu URL
         let model, maxPredictions;
 
         async function initModel() {
-            try {
-                document.getElementById("debug").innerText = "Cargando modelo...";
-                const modelURL = URL + "model.json";
-                const metadataURL = URL + "metadata.json";
-                model = await tmImage.load(modelURL, metadataURL);
-                maxPredictions = model.getTotalClasses();
-                document.getElementById("debug").innerText = "✅ Modelo cargado correctamente.";
-                console.log("Modelo cargado con éxito.");
-            } catch (error) {
-                document.getElementById("debug").innerText = "❌ Error al cargar el modelo.";
-                console.error("Error al cargar el modelo:", error);
-            }
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
         }
 
         async function handleImageUpload(event) {
             const image = document.getElementById("uploadedImage");
-            const file = event.target.files[0];
-
-            if (!file) {
-                document.getElementById("debug").innerText = "⚠️ No se seleccionó ninguna imagen.";
-                return;
-            }
-
-            image.src = URL.createObjectURL(file);
+            image.src = URL.createObjectURL(event.target.files[0]);
             image.onload = async () => {
                 image.style.display = "block";
-                document.getElementById("debug").innerText = "📷 Imagen cargada. Procesando...";
-                try {
-                    const prediction = await model.predict(image);
-                    let resultText = "";
-                    prediction.forEach(p => {
-                        resultText += `${p.className}: ${(p.probability * 100).toFixed(2)}%<br>`;
-                    });
-                    document.getElementById("result").innerHTML = resultText;
-                    document.getElementById("debug").innerText = "✅ Predicción completada.";
-                    console.log("Predicción:", prediction);
-                } catch (error) {
-                    document.getElementById("debug").innerText = "❌ Error al hacer la predicción.";
-                    console.error("Error en la predicción:", error);
-                }
+                const prediction = await model.predict(image);
+                let resultText = "";
+                prediction.forEach(p => {
+                    resultText += `${p.className}: ${(p.probability * 100).toFixed(2)}%<br>`;
+                });
+                document.getElementById("result").innerHTML = resultText;
             };
         }
 
